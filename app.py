@@ -15,13 +15,13 @@ st.set_page_config(
 def load_artifacts():
     """Loads the pickled model and scaler."""
     try:
-        with open('model.pkl', 'rb') as file:
+        with open('rf_model.pkl', 'rb') as file:
             model = pickle.load(file)
         with open('scaler.pkl', 'rb') as file:
             scaler = pickle.load(file)
         return model, scaler
     except FileNotFoundError as e:
-        st.error(f"Error loading files: {e}. Make sure 'model.pkl' and 'scaler.pkl' are in the same directory.")
+        st.error(f"Error loading files: {e}. Make sure 'rf_model.pkl' and 'scaler.pkl' are in the same directory.")
         return None, None
 
 model, scaler = load_artifacts()
@@ -128,7 +128,9 @@ if model and scaler:
         prediction_proba = model.predict_proba(input_df)
 
         st.subheader('Prediction Result')
-       
+        
+        # Note: Your notebook defines Target=1 as low-risk (approved) and Target=0 as high-risk (rejected)
+        # after undersampling. We follow that logic here.
         if prediction[0] == 1:
             st.success('**Approved** (Low Risk)')
             st.progress(prediction_proba[0][1])
